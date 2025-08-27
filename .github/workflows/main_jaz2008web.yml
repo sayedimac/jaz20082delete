@@ -50,6 +50,7 @@ jobs:
         uses: azure/webapps-deploy@v3
         with:
           app-name: 'jaz2008web'
-          slot-name: 'Production'
+          slot-name: 'uat'
           package: .
+
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_A4878DF619B342A0A0B01C48468EF382 }}
