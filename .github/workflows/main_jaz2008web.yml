@@ -12,6 +12,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    environment: uat
     permissions:
       contents: read #This is required for actions/checkout
 
@@ -54,3 +55,4 @@ jobs:
           package: .
 
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_A4878DF619B342A0A0B01C48468EF382 }}
+
