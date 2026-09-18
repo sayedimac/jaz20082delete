@@ -36,3 +36,6 @@ func start
 ## Deployment
 
 The repository includes a GitHub Actions workflow (`.github/workflows/azure-static-web-apps.yml`) that builds both projects and deploys them to Azure Static Web Apps. It expects an `AZURE_STATIC_WEB_APPS_API_TOKEN` repository secret.
+
+
+hahaha
