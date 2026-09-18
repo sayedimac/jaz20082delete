@@ -26,6 +26,12 @@ public class Greet
             return new BadRequestObjectResult("Please pass a name on the query string, e.g. ?name=World");
         }
 
+        const int maxNameLength = 100;
+        if (name.Length > maxNameLength)
+        {
+            return new BadRequestObjectResult($"Name must be {maxNameLength} characters or fewer.");
+        }
+
         return new OkObjectResult($"Hello, {name}! Welcome to Azure Functions!");
     }
 }
