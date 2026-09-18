@@ -1,7 +1,8 @@
 ---
-applyTo: "src/api"
+applyTo: "src/api/**"
 ---
 
-- This is a c# (dotnet 10.0) Function App that runs in Isolated Mode as part of a Static Web app in Azure
-- It connects to Azure Foundry (New) using environment variables (agent service) and allows interaction from the front-end
-- There is at least one function that greets a user by name  (string name parameter) - this will get called by the front-end which will eventually expand to integrate the core capabilities
+- This folder is for a C# .NET 10 Azure Functions app using the isolated worker model.
+- Keep functions lightweight HTTP triggers that support the Azure Static Web Apps frontend in `src/web`.
+- Read configuration, service endpoints, and credentials from environment variables or local settings that are not committed.
+- If adding sample endpoints, keep them simple and easy for the frontend to call, such as a greeting endpoint that accepts a `name` value.
