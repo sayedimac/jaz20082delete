@@ -1,90 +1,22 @@
-# CopilotTest — quickstart (Blazor WASM + .NET 10 Functions)
+# Repository Copilot instructions
 
-Purpose
-- Minimal setup for a Blazor WebAssembly static web app (dotnet 10) in src/web
-- .NET 10 Azure Functions backend in src/api
-- Ready for local dev and GitHub Actions deploy to Azure Static Web Apps
+This repository is currently focused on Copilot guidance for a planned Azure Static Web Apps project. Keep changes small and aligned with the existing instruction files.
 
-Prerequisites
-- .NET 10 SDK installed
-- (For Functions) Azure Functions Core Tools v4+ and dotnet-isolated support
-- Git, optional: Azure CLI, VS Code
+## Intended application shape
 
-Recommended folder layout (root of repo)
-- src/
-    - web/    ← Blazor WebAssembly app
-    - api/    ← Azure Functions (.NET 10 isolated)
+- `src/web` is reserved for a .NET 10 Blazor WebAssembly frontend.
+- `src/api` is reserved for a .NET 10 Azure Functions backend using the isolated worker model.
+- The frontend and backend are intended to work together as an Azure Static Web App.
 
-Create projects (from repo root)
-1. Create solution
-     dotnet new sln -n CopilotTest
-     
+## Working in this repository
 
-2. Create Blazor WASM client
-     mkdir -p src
-     dotnet new blazorwasm -o src/web -f net10.0
+- Do not scaffold `src/web`, `src/api`, workflows, or solution files unless an issue explicitly asks for implementation files.
+- When application files are added, keep a root solution that includes both projects and validate with `dotnet build`.
+- Prefer lightweight HTTP-trigger functions for API endpoints used by the static web frontend.
+- Keep secrets out of source control. Use repository secrets or local environment variables for Azure deployment tokens and service credentials.
+- Update the folder-specific instruction files in `.github/instructions/` when guidance for `src/web` or `src/api` changes.
 
-3. Create Azure Functions (dotnet-isolated) — requires Func Core Tools
-     # from repo root
-     func init src/api --worker-runtime dotnet-isolated --target-framework net10.0
-     cd src/api
-     func new --template "HTTP trigger" --name HttpTrigger --authlevel "anonymous"
+## Validation guidance
 
-4. Add projects to solution
-     dotnet sln add src/web/*.csproj src/api/*.csproj
-
-Local dev
-- Build everything:
-    dotnet build
-
-- Run web locally (serves the static site)
-    dotnet run --project src/web
-
-- Run functions locally (from src/api)
-    cd src/api
-    func start
-
-- Tip: set CORS/local endpoints as needed in local.settings.json for testing.
-
-GitHub Actions (Azure Static Web Apps) — minimal workflow
-- Place this workflow in .github/workflows/azure-static-web-apps.yml
-- It assumes you create an Azure Static Web App and put the deployment token in repository secrets as AZURE_STATIC_WEB_APPS_API_TOKEN
-
-name: Azure Static Web Apps CI/CD
-
-on:
-    push:
-        branches:
-            - main
-
-jobs:
-    build_and_deploy_job:
-        runs-on: ubuntu-latest
-        steps:
-            - uses: actions/checkout@v4
-            - name: Setup .NET
-                uses: actions/setup-dotnet@v4
-                with:
-                    dotnet-version: '10.0.x'
-            - name: Build
-                run: dotnet build --configuration Release
-            - name: Deploy to Azure Static Web Apps
-                uses: Azure/static-web-apps-deploy@v1
-                with:
-                    azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
-                    repo_token: ${{ secrets.GITHUB_TOKEN }}
-                    action: "upload"
-                    app_location: "src/web"
-                    api_location: "src/api"
-                    output_location: "wwwroot"
-
-Notes & best practices
-- Keep APIs lightweight (HTTP triggers) when used as backend for a static web app.
-- Prefer .NET isolated Functions for .NET 10 support.
-- Use CI to build both projects so the deployment artifact matches local behavior.
-- Add a root README, .gitignore, and a solution-level launch/debug configs as needed.
-
-If you want, I can:
-- produce a sample HTTP trigger function code
-- produce a ready-to-use GitHub Actions file with exact Azure Static Web Apps action configuration
-- create solution and project files (commands/scripts) to run locally
+- For instruction-only changes, review the Markdown/YAML for clarity and correct paths.
+- For future .NET code changes, run the most targeted available build or test command first, then broader validation if needed.
