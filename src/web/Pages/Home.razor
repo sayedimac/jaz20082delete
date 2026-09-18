@@ -1,0 +1,89 @@
+@page "/"
+@using System.Net.Http.Json
+@inject HttpClient Http
+
+<PageTitle>Chat</PageTitle>
+
+<h1>Chat</h1>
+
+<p>Type your name below and send it to the backend function to get a greeting.</p>
+
+<div class="mb-3">
+    <div class="border rounded p-3 mb-3" style="min-height: 200px;">
+        @if (messages.Count == 0)
+        {
+            <p class="text-muted">No messages yet. Say hello!</p>
+        }
+        else
+        {
+            @foreach (var message in messages)
+            {
+                <p><strong>@message.Sender:</strong> @message.Text</p>
+            }
+        }
+    </div>
+
+    <div class="input-group">
+        <input class="form-control" placeholder="Enter your name..." @bind="prompt" @bind:event="oninput" @onkeydown="OnKeyDown" />
+        <button class="btn btn-primary" @onclick="SendMessage" disabled="@isSending">Send</button>
+    </div>
+
+    @if (!string.IsNullOrEmpty(errorMessage))
+    {
+        <p class="text-danger mt-2">@errorMessage</p>
+    }
+</div>
+
+@code {
+    private List<ChatMessage> messages = new();
+    private string prompt = string.Empty;
+    private bool isSending;
+    private string? errorMessage;
+
+    private async Task SendMessage()
+    {
+        if (string.IsNullOrWhiteSpace(prompt) || isSending)
+        {
+            return;
+        }
+
+        var name = prompt;
+        messages.Add(new ChatMessage("You", name));
+        prompt = string.Empty;
+        errorMessage = null;
+        isSending = true;
+
+        try
+        {
+            var response = await Http.GetAsync($"api/Greet?name={Uri.EscapeDataString(name)}");
+            var content = await response.Content.ReadAsStringAsync();
+
+            if (response.IsSuccessStatusCode)
+            {
+                messages.Add(new ChatMessage("Bot", content));
+            }
+            else
+            {
+                errorMessage = $"Error calling backend: {response.StatusCode}";
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error calling backend: {ex.Message}";
+        }
+        finally
+        {
+            isSending = false;
+        }
+    }
+
+    private async Task OnKeyDown(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter")
+        {
+            await SendMessage();
+        }
+    }
+
+    private record ChatMessage(string Sender, string Text);
+}
